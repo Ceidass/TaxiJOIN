@@ -1,6 +1,6 @@
 --Δημιουργία Βάσης Δεδομένων
 
-CREATE DATABASE TaxiJOIN;
+CREATE DATABASE taxijoin;
 
 --Δημιουργία Πίνακα Εγγεγραμμένων Χρηστών
 
