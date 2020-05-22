@@ -5,7 +5,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "TaxiJOIN";
+$dbname = "taxijoin";
 
 //Create database
 $conn = mysqli_connect($servername, $username, $password, $dbname);
@@ -16,7 +16,7 @@ if (!$conn) {
 }
 
 //Select database
-//mysqli_select_db($conn, "TaxiJOIN");
+//mysqli_select_db($conn, "taxijoin");
 $usr = strtolower($_GET['usr']);
 $quest = "SELECT username FROM users";
 $result = mysqli_query($conn, $quest);
