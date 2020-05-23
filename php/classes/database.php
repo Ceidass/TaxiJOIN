@@ -13,12 +13,12 @@ class Database{
 	
 	public static function action($act){
         
-        $callername = strtolower($_POST['usr']);
-        
         switch($act){
             
             case "usernameCheck":
-            
+                
+                $callername = strtolower($_POST['usr']);
+                
                 $$callername = new Database("SELECT username FROM users");
                 $result = $$callername->performQuery();
                 
@@ -44,6 +44,30 @@ class Database{
                 echo $check;
                 
                 break;
+                
+            case "SignUp":
+                
+                $callername = strtolower($_POST['username']);
+                
+                $password = $_POST['password'];
+                $$callername = new Database("INSERT INTO users(username, password) VALUES('".$callername."','".$password."')");
+                $result = $$callername->performQuery();
+                
+                if(!$result){
+                    echo "Failed creating account 1";
+                    break;
+                }
+                
+                $$callername->setQuery("CREATE TABLE '".$callername."' (friend VARCHAR(100))");
+                $result = $$callername->performQuery();
+                
+                if(!$result){
+                    echo "Failed creating account 2";
+                    $$callername->setQuery("DELETE FROM users WHERE username='".$callername."'");
+                    
+                }
+                
+                unset($callername);
             
         }
         
@@ -63,6 +87,12 @@ class Database{
 		
 	}
 	
+	public function setQuery($query){
+        
+        $this->query = $query;
+        
+	}
+	
 	public function performQuery(){
         
         
@@ -71,7 +101,6 @@ class Database{
         
         return $res;
 	}
-	
 	
 }
 
