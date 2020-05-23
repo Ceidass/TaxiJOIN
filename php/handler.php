@@ -2,9 +2,9 @@
 
 include 'classes/database.php';
 
-if(isset($_GET['action'])){
+if(isset($_POST['action'])){
   
-    Database::action($_GET['action']);
+    Database::action($_POST['action']);
 
 }
 

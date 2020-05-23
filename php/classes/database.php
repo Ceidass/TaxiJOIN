@@ -13,7 +13,7 @@ class Database{
 	
 	public static function action($act){
         
-        $callername = strtolower($_GET['usr']);
+        $callername = strtolower($_POST['usr']);
         
         switch($act){
             
