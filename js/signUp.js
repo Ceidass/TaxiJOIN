@@ -55,7 +55,7 @@ function usr_check(){
 		
             sub_en_dis();
 		};
-		usr_ajax.open("GET","php/username_check.php?usr=" + usr.value,true);
+		usr_ajax.open("GET","php/username_check.php?action=usernameCheck&usr=" + usr.value,true);
 		usr_ajax.send();
 	
     };
