@@ -20,6 +20,7 @@ class Database{
                 $callername = strtolower($_POST['usr']);
                 
                 $$callername = new Database("SELECT username FROM users");
+                
                 $result = $$callername->performQuery();
                 
                 while($row = $result->fetch_assoc())
@@ -50,7 +51,9 @@ class Database{
                 $callername = strtolower($_POST['username']);
                 
                 $password = $_POST['password'];
+                
                 $$callername = new Database("INSERT INTO users(username, password) VALUES('".$callername."','".$password."')");
+                
                 $result = $$callername->performQuery();
                 
                 if(!$result){
@@ -58,12 +61,13 @@ class Database{
                     break;
                 }
                 
-                $$callername->setQuery("CREATE TABLE '".$callername."' (friend VARCHAR(100))");
+                $$callername->setQuery("CREATE TABLE ".$callername."(friend VARCHAR(100))");
+                
                 $result = $$callername->performQuery();
                 
                 if(!$result){
                     echo "Failed creating account 2";
-                    $$callername->setQuery("DELETE FROM users WHERE username='".$callername."'");
+                    $$callername->setQuery("DELETE FROM users WHERE 'username'='".$callername."'");
                     
                 }
                 
@@ -75,7 +79,8 @@ class Database{
 
 	function __construct($query){
     
-        $this->conn = new mysqli(self::SERVERNAME , self::USERNAME , self::PASSWORD , self::DBNAME);;
+        $this->conn = new mysqli(self::SERVERNAME , self::USERNAME , self::PASSWORD , self::DBNAME);
+        ($this->conn)->select_db("taxijoin");
         $this->query = $query;
         
 	}
