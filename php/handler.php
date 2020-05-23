@@ -1,10 +1,12 @@
 <?php
 
-if(isset($_POST['action'])){
+include 'classes/database.php';
 
-    DataBase::action($_POST['action']);
+if(isset($_GET['action'])){
+  
+    Database::action($_GET['action']);
 
 }
 
 
->
+?>

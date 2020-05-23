@@ -38,9 +38,11 @@ class Database{
                 
                 $check = json_encode($name);
                 
+                
+                unset($callername);
+                
                 echo $check;
                 
-                unset($$callername)
                 break;
             
         }
@@ -49,7 +51,7 @@ class Database{
 
 	function __construct($query){
     
-        $this->conn = new mysqli(SERVERNAME , USERNAME , PASSWORD , DBNAME);;
+        $this->conn = new mysqli(self::SERVERNAME , self::USERNAME , self::PASSWORD , self::DBNAME);;
         $this->query = $query;
         
 	}
@@ -63,12 +65,14 @@ class Database{
 	
 	public function performQuery(){
         
-        $res = ($this->conn)->query($query);
         
-        return res;
+        
+        $res = ($this->conn)->query($this->query);
+        
+        return $res;
 	}
 	
 	
 }
 
->
+?>

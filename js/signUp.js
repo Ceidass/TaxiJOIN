@@ -38,9 +38,9 @@ function usr_check(){
 		usr_ajax.onreadystatechange = function(){
 			
 			if (this.readyState == 4 && this.status == 200) {
-				//console.log(this.responseText); //debug
+				console.log(this.responseText); //debug
                 let check = JSON.parse(this.responseText);
-				//console.log(check); //debug
+				console.log(check); //debug
 				if(check.exists == true){
 					document.getElementById("usr_val").style.display = "none";
 					document.getElementById("usr_inval").style.display = "initial";
@@ -55,7 +55,7 @@ function usr_check(){
 		
             sub_en_dis();
 		};
-		usr_ajax.open("GET","php/username_check.php?action=usernameCheck&usr=" + usr.value,true);
+		usr_ajax.open("GET","php/handler.php?action=usernameCheck&usr=" + usr.value,true);
 		usr_ajax.send();
 	
     };
