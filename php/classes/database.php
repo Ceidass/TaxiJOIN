@@ -72,6 +72,8 @@ class Database{
                 }
                 
                 unset($callername);
+                
+                break;
             
         }
         
@@ -99,8 +101,6 @@ class Database{
 	}
 	
 	public function performQuery(){
-        
-        
         
         $res = ($this->conn)->query($this->query);
         
