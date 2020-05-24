@@ -1,5 +1,7 @@
 <?php
 
+include 'user.php';
+
 class Database{
 	
 	//Attributes
@@ -56,17 +58,12 @@ class Database{
                 
                 $result = $$callername->performQuery();
                 
-                if(!$result){
-                    echo "Failed creating account 1";
-                    break;
-                }
-                
                 $$callername->setQuery("CREATE TABLE ".$callername."(friend VARCHAR(100))");
                 
                 $result = $$callername->performQuery();
                 
                 if(!$result){
-                    echo "Failed creating account 2";
+                    
                     $$callername->setQuery("DELETE FROM users WHERE 'username'='".$callername."'");
                     
                 }
@@ -90,7 +87,9 @@ class Database{
                 header("Location: ../login.html");
                 exit();
             }else{
-                echo "Logged In";
+                //Create new User object 
+                $$callername = new User($callername);
+                
             }
             
         }
