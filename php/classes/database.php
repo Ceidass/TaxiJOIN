@@ -75,6 +75,24 @@ class Database{
                 
                 break;
             
+            case "SignIn":
+            
+            $callername = strtolower($_POST['username']);
+                
+            $password = $_POST['password'];
+            
+            $$callername = new Database("SELECT * FROM users WHERE username='".$callername."' AND password='".$password."'");
+            
+            $result = $$callername->performQuery();
+            
+            if($result->num_rows == 0){
+                unset($callername);
+                header("Location: ../login.html");
+                exit();
+            }else{
+                echo "Logged In";
+            }
+            
         }
         
 	}
