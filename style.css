@@ -114,3 +114,15 @@ footer {
 	height: 300px;
 
 }
+
+#SignOut {
+    
+    background-color: red;
+    color: white;
+    border-style: outset;
+	border-color: grey;
+}
+
+#SignOut:hover {
+	border-color: black;
+}

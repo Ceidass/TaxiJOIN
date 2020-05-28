@@ -1,53 +1,59 @@
 <?PHP
 
+include 'main.php';
+
 class User{
     
     
     private $session; //Variable which keeps logged in user's information
     
-    public static $usersList; //Array which keeps logged in users
+    function __construct(){
+        
+    }
     
-    function __construct($username){
+    function __destruct(){
+        
+    }
+    
+    public function sesStart($username){
         //Create session
         session_start();
         
         //Set session username
         $_SESSION['username'] = $username;
         
-        //Set session attribute as the superglobal $_SESSION
-        $this->session = $_SESSION;
-        
-        //Add this User object to $usersList array
-        $this->userAdd();
-        
+        //Set session type
+        $_SESSION['type'] = "USER";
     }
     
-    function __destruct(){
-        
-        //Delete this user object from $usersList array
-        $this->userDelete();
+    public function sesStop(){
         
         //Unset elements of $_SESSION superglobal
         session_unset();
         
-        //Destroy users session
+        //Destroy user's session
         session_destroy();
         
+    }
     
+    public function setSess(){
+        
+        //Set session attribute as the superglobal $_SESSION
+        $this->session = $_SESSION;
+        
     }
     
     public function userAdd(){
         
-        //Add calling User object to $usersList array
-        self::$usersList[$this->session['username']]=$this;
+        //Add user to online list
+        Main::action('AddUser');
         
     }
     
     public function userDelete(){
         
-        //Delete calling User object to $usersList array
-        unset(self::$usersList[$this->session['username']]);
-        
+        //Delete user from online list
+        Main::action('DelUser');
     }
 }
 

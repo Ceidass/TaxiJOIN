@@ -1,11 +1,9 @@
 <?php
 
-include 'classes/database.php';
+include 'classes/main.php';
 
 if(isset($_POST['action'])){
-    
-    Database::action($_POST['action']);
-
+   Main::action($_POST['action']);
 }
 
 
