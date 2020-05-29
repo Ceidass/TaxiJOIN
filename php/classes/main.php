@@ -221,6 +221,34 @@ class Main{
                 
                 break;
             
+            case "StartSearch":
+                
+                session_start();
+                
+                $callername = $_SESSION['username'];
+                
+                //Create new Startpage object
+                $sp = new Startpage();
+                
+                //Call selectStartPoint method
+                $result = $sp->selectStartPoint($_POST['startLat'],$_POST['startLong']);
+                
+                //If there are no rows as result of the query
+                if(!$result){
+                    //Display error for the user to continue with creating new request or exit
+                    $sp->displayError("No matches. Select end point to create new Request or exit");
+            
+                }else{
+                    //Display prompt for the user to continue the search with end point
+                    $sp->displayPrompt("Select End Point");
+                
+                }
+                
+                //Unset sp object
+                unset($sp);
+                
+                break;
+            
         }
         
 	}

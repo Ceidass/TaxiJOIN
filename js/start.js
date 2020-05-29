@@ -1,7 +1,7 @@
 //SignOut button
 let sout  = document.getElementById("SignOut");
 
-
+//Sign Out on click function
 function signOut(){
     
     window.location.replace("login.html");
@@ -14,4 +14,5 @@ function signOut(){
     
 }
 
+//Clicking Sign Out button
 sout.onclick = signOut;
