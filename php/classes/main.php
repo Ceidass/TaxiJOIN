@@ -1,7 +1,8 @@
 <?php
 
-include 'database.php';
-include 'user.php';
+require_once('database.php');
+require_once('user.php');
+require_once('startpage.php');
 
 class Main{
     
@@ -34,7 +35,7 @@ class Main{
                 $check = json_encode($name);
                 
                 
-                unset($callername);
+                unset($db);
                 
                 echo $check;
                 
@@ -84,101 +85,141 @@ class Main{
             
             case "SignIn":
             
-            $callername = strtolower($_POST['username']);
-                
-            $password = $_POST['password'];
-            
-            //Create Database object and set query
-            $db = new Database("SELECT * FROM users WHERE username='".$callername."' AND password='".$password."'");
-            
-            //Perfom query and save results
-            $result = $db->performQuery();
-            
-            //Create array from query results
-            while ($row = $result->fetch_assoc())
-                $temp[] = $row;
-            
-            //Access associative array from every row of result
-            foreach($temp as $value){
-                $type['isDriver'] = $value['isDriver'];
-                $type['isAdmin'] = $value['isAdmin'];
-                
-            }
-            
-            //Destroy Database object
-            unset($db);
-            
-            //If there is no user with this username and/or this password
-            if($result->num_rows == 0){
-                header("Location: ../login.html");
-                exit;
-            }else{
-                
-                if($type['isDriver'] == 0 && $type['isAdmin'] == 0){ //If is simple user
-                    //Create new User object 
-                    $online = new User();
+                $callername = strtolower($_POST['username']);
                     
-                }elseif($type['isDriver'] == 1 && $type['isAdmin'] == 0){ //If is driver
-                    //Create new Driver object
-                    $online = new Driver($callername);
-                    
-                }elseif($type['isDriver'] == 0 && $type['isAdmin'] == 1){ //If is admin
-                    //Create new Admin object
-                    $online = new Admin($callername);
+                $password = $_POST['password'];
+                
+                //Create Database object and set query
+                $db = new Database("SELECT * FROM users WHERE username='".$callername."' AND password='".$password."'");
+                
+                //Perfom query and save results
+                $result = $db->performQuery();
+                
+                //Create array from query results
+                while ($row = $result->fetch_assoc())
+                    $temp[] = $row;
+                
+                //Access associative array from every row of result
+                foreach($temp as $value){
+                    $type['isDriver'] = $value['isDriver'];
+                    $type['isAdmin'] = $value['isAdmin'];
                     
                 }
                 
-            }
+                //Destroy Database object
+                //unset($db);
+                
+                //If there is no user with this username and/or this password
+                if($result->num_rows == 0){
+                    header("Location: ../login.html");
+                    exit;
+                }else{
+                    
+                    if($type['isDriver'] == 0 && $type['isAdmin'] == 0){ //If is simple user
+                        //Create new User object 
+                        $online = new User();
+                        
+                    }elseif($type['isDriver'] == 1 && $type['isAdmin'] == 0){ //If is driver
+                        //Create new Driver object
+                        $online = new Driver($callername);
+                        
+                    }elseif($type['isDriver'] == 0 && $type['isAdmin'] == 1){ //If is admin
+                        //Create new Admin object
+                        $online = new Admin($callername);
+                        
+                    }
+                    
+                }
+                
+                //Create and init $_SESSION
+                $online->sesStart($callername);
+                
+                //Set session attribute as the superglobal $_SESSION
+                $online->setSess();
+                
+                ////Add user to online list
+                $online->userAdd();
+                
+                //Create new Startpage object
+                $sp = $online->createPage();
+                    
+                //Go to start page
+                $sp->headerPage();
+                
+                unset($sp);
+                
+                unset($online);
+                
+                break;
+                
+            case "SignOut":
             
-            //Create and init $_SESSION
-            $online->sesStart($callername);
-            
-            //Set session attribute as the superglobal $_SESSION
-            $online->setSess();
-            
-            ////Add user to online list
-            $online->userAdd();
-            
-            break;
-            
+                session_start();
+                
+                if($_SESSION['type'] == "USER"){
+                    //Create new User object 
+                    $offline = new User();
+                    
+                }elseif($_SESSION['type'] == "DRIVER"){
+                    //Create new Driver object 
+                    $offline = new Driver();
+                    
+                }elseif($_SESSION['type'] == "ADMIN"){
+                    //Create new Admin object 
+                    $offline = new Admin();
+                
+                }
+                
+                //Delete user from online list
+                $offline->userDelete();
+                
+                //Unset session variables and destroy session
+                $offline->sesStop();
+                
+                unset($offline);
+                
+                header('Location: ../login.html');
+                
+                break;
+                
             case "AddUser":
             
-            $callername = $_SESSION['username'];
-            
-            //Check the type of user trying to connect
-            if($_SESSION['type'] == "USER"){
-                $isDriver = 0;
-                $isAdmin = 0;
-            }elseif($_SESSION['type'] == "DRIVER"){
-                $isDriver = 1;
-                $isAdmin = 0;
-            }elseif($_SESSION['type'] == "ADMIN"){
-                $isDriver = 0;
-                $isAdmin = 1;
-            }
-            
-            //Create new Database object and set query for inserting new record to online list table
-            $db = new Database("INSERT INTO connected(username, isDriver, isAdmin) VALUES('".$callername."' , '".$isDriver."' , '".$isAdmin."')");
-            
-            //Perform query for inserting new record to online list table
-            $db->performQuery();
-            
-            //Unset Database object
-            unset($db);
-            
-            break;
+                $callername = $_SESSION['username'];
+                
+                //Check the type of user trying to connect
+                if($_SESSION['type'] == "USER"){
+                    $isDriver = 0;
+                    $isAdmin = 0;
+                }elseif($_SESSION['type'] == "DRIVER"){
+                    $isDriver = 1;
+                    $isAdmin = 0;
+                }elseif($_SESSION['type'] == "ADMIN"){
+                    $isDriver = 0;
+                    $isAdmin = 1;
+                }
+                
+                //Create new Database object and set query for inserting new record to online list table
+                $db = new Database("INSERT INTO connected(username, isDriver, isAdmin) VALUES('".$callername."' , '".$isDriver."' , '".$isAdmin."')");
+                
+                //Perform query for inserting new record to online list table
+                $db->performQuery();
+                
+                //Unset Database object
+                unset($db);
+                
+                break;
             
             case "DelUser":
             
-            $callername = $_SESSION['username'];
-            
-            $db = new Database("DELETE FROM connected WHERE username = '".$callername."'");
-            
-            $result=$db->performQuery();
-            
-            unset($db);
-            
-            break;
+                $callername = $_SESSION['username'];
+                
+                $db = new Database("DELETE FROM connected WHERE username = '".$callername."'");
+                
+                $result=$db->performQuery();
+                
+                unset($db);
+                
+                break;
             
         }
         

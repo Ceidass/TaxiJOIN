@@ -1,6 +1,6 @@
 <?php
 
-include 'user.php';
+require_once('user.php');
 
 class Database{
 	

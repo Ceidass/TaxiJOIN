@@ -1,11 +1,12 @@
-<?PHP
+<?php
 
-include 'main.php';
+require_once('main.php');
+require_once('startpage.php');
 
 class User{
     
     
-    private $session; //Variable which keeps logged in user's information
+    public static $session; //Variable which keeps logged in user's information
     
     function __construct(){
         
@@ -39,7 +40,7 @@ class User{
     public function setSess(){
         
         //Set session attribute as the superglobal $_SESSION
-        $this->session = $_SESSION;
+        self::$session = $_SESSION;
         
     }
     
@@ -54,6 +55,15 @@ class User{
         
         //Delete user from online list
         Main::action('DelUser');
+    }
+    
+    public function createPage(){
+        
+        //Create Startpage object
+        $startpage = new Startpage();
+        
+        return $startpage;
+        
     }
 }
 
