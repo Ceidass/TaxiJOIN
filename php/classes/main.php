@@ -223,10 +223,6 @@ class Main{
             
             case "StartSearch":
                 
-                session_start();
-                
-                $callername = $_SESSION['username'];
-                
                 //Create new Startpage object
                 $sp = new Startpage();
                 
@@ -250,11 +246,17 @@ class Main{
                 break;
             
             case "CreateRequest":
-            
-            session_start();
-            
-            
-            
+                
+                //Create new Startpage object
+                $sp = new Startpage();
+                
+                //Give to the startpage object the attributes to create with these a new request
+                $sp->inputAttrs((double)$_POST['startLat'], (double)$_POST['startLong'], (double)$_POST['endLat'], (double)$_POST['endLong'], (int)$_POST['persons'], (int)$_POST['time']);
+                
+                unset($sp);
+                
+                break;
+                
         }
         
 	}

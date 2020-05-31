@@ -5,8 +5,7 @@ require_once('request.php');
 class Startpage{
 
     private $startPoint;
-    private $endPoint;
-
+    
     function __construct(){
     }
     
@@ -29,16 +28,19 @@ class Startpage{
         unset($rq);
     }
     
-    public function selectEndPoint(){
-        
-        //Setting endPoint attribute
-        $this->endPoint = $endPoint;
+    public function inputAttrs($startLat, $startLong, $endLat, $endLong, $participants, $time){
         
         //Create Request object
         $rq = new Request();
         
+        //Set Request object attributes
+        $rq->setAttrs($startLat, $startLong, $endLat, $endLong, $participants, $time);
         
+        //Save Request to database
+        $rq->saveReq();
         
+        //Unset rq object
+        unset($rq);
     }
     
     public function displayPrompt($message){

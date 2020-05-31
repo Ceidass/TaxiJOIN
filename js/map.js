@@ -81,6 +81,10 @@ function onMapClick(e){
             
         }else{//If first search was unsuccesfull (Create your own request)
             
+            //Variables for persons and time attributes to send values to server
+            let persons =  document.getElementById("persons");
+            let time =  document.getElementById("time");
+            
             //Variable for create button to create an onclick event
             let create = document.getElementById("create");
             
@@ -105,6 +109,7 @@ function onMapClick(e){
             document.getElementById("req").style.display = "initial";
             
             create.onclick = function(){
+                
                 //Set Prompt
                 document.getElementById("prompt").innerHTML = "Your request has been activated.Please wait for other users to connect...";
                             
@@ -116,9 +121,9 @@ function onMapClick(e){
                 document.getElementById("req").style.display = "none";
                 
                 //AJAX request searching for matching requests
-                let rqSrch = new XMLHttpRequest();
+                let createRq = new XMLHttpRequest();
                 
-                rqSrch.onreadystatechange = function(){
+                createRq.onreadystatechange = function(){
                     
                     if (this.readyState == 4 && this.status == 200) {
                         
@@ -131,10 +136,9 @@ function onMapClick(e){
                     
                 };
                 
-                rqSrch.open("POST","php/handler.php",true);
-                rqSrch.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                rqSrch.send("action=CreateRequest&startLat="+firstClick[0]+"&startLong="+firstClick[1]+"&endLat="+secondClick[0]+"&endLong="+secondClick[1]);
-                
+                createRq.open("POST","php/handler.php",true);
+                createRq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                createRq.send("action=CreateRequest&startLat="+Number(firstClick['lat'])+"&startLong="+Number(firstClick['lng'])+"&endLat="+Number(secondClick['lat'])+"&endLong="+Number(secondClick['lng'])+"&persons="+Number(persons.value)+"&time="+Number(time.value));
                 
             };//create.onclick end
             
