@@ -12,6 +12,32 @@ let secondClick = false;
 //Variable for checking if first click had matches
 let firstSearch = false;
 
+//Function to be called onclick of cancel button
+function cancel(){
+    
+    //Set Cancel message
+    document.getElementById("error").innerHTML = "Canceled";
+    //Stop displaying CANCEL button
+    document.getElementById("cancel").style.display = "none";
+    
+    //Stop displaying request's attributes form
+    document.getElementById("req").style.display = "none";
+    
+    //Disable prompts and enable errors
+    document.getElementById("prompt").style.display = "none";
+    document.getElementById("error").style.display = "initial";
+    
+    //AJAX request searching for canceling request search or creation
+    let cncl = new XMLHttpRequest();
+    
+    cncl.open("POST","php/handler.php",true);
+    cncl.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    cncl.send("action=Cancel");
+    
+    //Refresh page
+    window.location.reload(false);
+}
+
 function onMapClick(e){
     
     //Variable for button CANCEL to display it and use it to create an onclick event
