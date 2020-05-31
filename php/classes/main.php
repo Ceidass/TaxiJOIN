@@ -249,6 +249,12 @@ class Main{
                 
                 break;
             
+            case "CreateRequest":
+            
+            session_start();
+            
+            
+            
         }
         
 	}

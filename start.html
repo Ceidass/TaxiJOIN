@@ -30,9 +30,40 @@
 			<b>Αρχική Σελίδα</b>
 		
 		</div>
-        <button type="button" id="SignOut">Αποσύνδεση</button> 
+		
+		<br>
+        
+        <button type="button" id="SignOut">Αποσύνδεση</button>
+        
+        <br>
+        
+        <button type="button" id="cancel">CANCEL</button>
+        
+		<br>
+		
         <div id="error" class="invalid"></div>
         <div id="prompt" class="valid"></div>
+        
+        <br> <br>
+        
+        <div id="req">
+        
+            <label for="persons" id="persons">Total number of persons now:</label>
+            <select name="persons" id="persons">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+            
+            <br>
+            
+            <label for="time" id="time">Select request's life time (minutes):</label>
+            <input type="number" name="time" id="time" min="1">
+            
+            <br>
+            
+            <button type="button" id="create" >Create</button>
+		</div>
 		<div id="map"></div>
 		
 		<footer>

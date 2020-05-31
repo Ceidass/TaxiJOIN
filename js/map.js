@@ -4,26 +4,46 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-function onFirstMapClick(e){
-    //Get click point coords
-    let startCoords = e.latlng;
-    console.log(startCoords);//debug
+
+//Variable for checking if first map click has occurred
+let firstClick = false;
+//Variable for checking if second map click has occured
+let secondClick = false;
+//Variable for checking if first click had matches
+let firstSearch = false;
+
+function onMapClick(e){
     
-    //Add marker in click point inside map
-    let startPoint = L.marker(startCoords).addTo(map);
+    //Variable for button CANCEL to display it and use it to create an onclick event
+    let cancel = document.getElementById("cancel");
     
-    //AJAX request searching for available request in area
-    let strtPntSrch = new XMLHttpRequest();
+    //Display button to be visible to user
+    cancel.style.display = "initial";
     
-    strtPntSrch.onreadystatechange = function(){
-			
-			if (this.readyState == 4 && this.status == 200) {
-				console.log(this.responseText); //debug
+    //If first click has not occured
+    if(firstClick === false && secondClick === false){
+        //Get click point (start point) coords
+        let startCoords = e.latlng;
+        console.log(startCoords);//debug
+        
+        //Change firstClick value
+        firstClick = startCoords;
+        
+        //Add marker in click point (start point) inside map
+        let startPoint = L.marker(startCoords).addTo(map);
+        
+        //AJAX request searching for available request in area
+        let strtPntSrch = new XMLHttpRequest();
+        
+        strtPntSrch.onreadystatechange = function(){
+            
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText); //debug
                 let result = JSON.parse(this.responseText);
-				console.log(result); //debug
+                console.log(result); //debug
                 
                 //If displayPrompt echoes
-				if(result.check){
+                if(result.check){
                     
                     //Set Prompt
                     document.getElementById("prompt").innerHTML = result.message;
@@ -42,16 +62,90 @@ function onFirstMapClick(e){
                     document.getElementById("error").style.display = "initial";
                 }
                 
+                //Assign value true or false to variable firstSearch to know if it has to keep searching or create new request
+                firstSearch = result.check;
                 
             }
             
-		};
-    strtPntSrch.open("POST","php/handler.php",true);
-    strtPntSrch.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    strtPntSrch.send("action=StartSearch&startLat="+startCoords[0]+"&startLong="+startCoords[1]);
+        };//strtPntSrch.onreadystatechange end
+            
+        strtPntSrch.open("POST","php/handler.php",true);
+        strtPntSrch.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        strtPntSrch.send("action=StartSearch&startLat="+firstClick[0]+"&startLong="+firstClick[1]);
+        
+    //if(firstClick === false) end
+    }else if(secondClick === false){//If first click has already occurred but the second not
+        
+        //If first search had matches (Continue searching for requests)
+        if(firstSearch){
+            
+        }else{//If first search was unsuccesfull (Create your own request)
+            
+            //Variable for create button to create an onclick event
+            let create = document.getElementById("create");
+            
+            //Get click point (end point) coords
+            let endCoords = e.latlng;
+            console.log(endCoords);//debug
+            
+            //Change secondClick value
+            secondClick = endCoords;
+            
+            //Add marker in click point (end point) inside map
+            let endPoint = L.marker(endCoords).addTo(map);
+            
+            //Set Prompt
+            document.getElementById("prompt").innerHTML = "Select total number of persons you are with and time you wish your request to live or CANCEL...";
+                        
+            //Disable Errors and enable prompts
+            document.getElementById("error").style.display = "none";
+            document.getElementById("prompt").style.display = "initial";
+            
+            //Display request attributes inputs
+            document.getElementById("req").style.display = "initial";
+            
+            create.onclick = function(){
+                //Set Prompt
+                document.getElementById("prompt").innerHTML = "Your request has been activated.Please wait for other users to connect...";
+                            
+                //Disable Errors and enable prompts
+                document.getElementById("error").style.display = "none";
+                document.getElementById("prompt").style.display = "initial"; 
+                
+                //Disable request's attributes inputs
+                document.getElementById("req").style.display = "none";
+                
+                //AJAX request searching for matching requests
+                let rqSrch = new XMLHttpRequest();
+                
+                rqSrch.onreadystatechange = function(){
+                    
+                    if (this.readyState == 4 && this.status == 200) {
+                        
+                        console.log(this.responseText); //debug
+                        //let result = JSON.parse(this.responseText);
+                        //console.log(result); //debug
+                        
+                        
+                    }
+                    
+                };
+                
+                rqSrch.open("POST","php/handler.php",true);
+                rqSrch.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                rqSrch.send("action=CreateRequest&startLat="+firstClick[0]+"&startLong="+firstClick[1]+"&endLat="+secondClick[0]+"&endLong="+secondClick[1]);
+                
+                
+            };//create.onclick end
+            
+        }//else end
+        
+    }//else end
     
-}
+}//function onMapClick(e) end
+
+
 
 //Clicking on map for the first time
-map.on('click', onFirstMapClick);
+map.on('click', onMapClick);
 

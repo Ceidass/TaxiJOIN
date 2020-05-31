@@ -127,3 +127,18 @@ footer {
 #SignOut:hover {
 	border-color: black;
 }
+
+#req{
+    display: none;
+}
+
+#cancel{
+    background-color: black;
+    color: white;
+    border-style: outset;
+	border-color: grey;
+    display: none;
+}
+#cancel:hover {
+	border-color: black;
+}
