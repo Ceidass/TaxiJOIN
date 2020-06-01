@@ -58,6 +58,22 @@ class Request{
 
         unset($db);
     }
+    
+    public function deleteReq($creator){
+        
+        //Create $db object and set query to delete requests with creator field matching with calling user
+        $db = new Database("DELETE FROM requests WHERE creator='".$creator."'");
+        
+        //Perform query and save result
+        $res = $db->performQuery();
+        
+        //Unset db object
+        unset($db);
+        
+        //Return result to (true/false)
+        return $res;
+        
+    }
 
 }
 

@@ -233,7 +233,7 @@ class Main{
                 if(!$result){
                     //Display error for the user to continue with creating new request or exit
                     $sp->displayError("No matches. Select end point to create new Request or exit");
-            
+                    
                 }else{
                     //Display prompt for the user to continue the search with end point
                     $sp->displayPrompt("Select End Point");
@@ -256,7 +256,42 @@ class Main{
                 unset($sp);
                 
                 break;
+            
+            case "Cancel":
                 
+                //Create new Startpage object
+                $sp = new Startpage();
+                
+                //Call cancel method
+                $check = $sp->cancel();
+                
+                $sp->initialPage($check);
+                
+                unset($sp);
+                
+                break;
+                
+            case "CheckRequest":
+                
+                $callername = $_SESSION['username'];
+                
+                //Create Database object and set query to search requests with $_SESSION['username']
+                $db = new Database("SELECT * FROM requests WHERE creator='".$callername."'");
+                
+                $res = $db->performQuery();
+                
+                if($res->num_rows > 0)
+                    echo "yes";
+                else
+                    echo "no";
+                    
+                break;
+                
+            case "AllReqs":
+                
+                
+                
+                break;
         }
         
 	}

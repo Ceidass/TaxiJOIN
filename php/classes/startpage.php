@@ -72,6 +72,28 @@ class Startpage{
         echo json_encode($result);
     }
     
+    public function cancel(){
+        
+        //Create new request object
+        $rq = new Request();
+        
+        //Delete reqs with $_SESSION['username'] as a creator
+        $result = $rq->deleteReq($_SESSION['username']);
+        
+        unset($rq);
+        
+        return $result;
+    }
+    
+    public function initialPage($check){
+        
+        if($check)
+            echo "ok";
+        else
+            echo "fail";
+        
+    }
+    
     public function headerPage(){
         
         header('Location:../start.html');

@@ -4,6 +4,52 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
+//Check if there is any active request with creator name as user's name
+//AJAX request searching for active requests with user's name
+let checkrq = new XMLHttpRequest();
+
+checkrq.onreadystatechange = function(){
+  
+    if (this.readyState == 4 && this.status == 200) {
+        //console.log(this.responseText); //debug
+        //If there is any active request
+        if(this.responseText == "yes"){
+            
+            //Set Prompt
+            document.getElementById("prompt").innerHTML = "Your request has been activated.Please wait for other users to connect...";
+            
+            //Disable Errors and enable prompts
+            document.getElementById("error").style.display = "none";
+            document.getElementById("prompt").style.display = "initial";
+            
+            //Enable CANCEL button
+            document.getElementById("cancel").style.display = "initial";
+            
+            //Setting first and second click to true so the user cannot set point to the map
+            firstClick = true;
+            secondClick = true;
+        }
+        
+    }
+    
+};
+
+checkrq.open("POST","php/handler.php",true);
+checkrq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+checkrq.send("action=CheckRequest");
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Searching for every request and display it to map
+let allreqs = new XMLHttpRequest();
+
+allreqs.onreadystatechange = function(){
+    
+    
+    
+};
+allreqs.open("POST","php/handler.php",true);
+allreqs.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+allreqs.send("action=AllReqs");
 
 //Variable for checking if first map click has occurred
 let firstClick = false;
@@ -15,27 +61,37 @@ let firstSearch = false;
 //Function to be called onclick of cancel button
 function cancel(){
     
-    //Set Cancel message
-    document.getElementById("error").innerHTML = "Canceled";
-    //Stop displaying CANCEL button
-    document.getElementById("cancel").style.display = "none";
-    
-    //Stop displaying request's attributes form
-    document.getElementById("req").style.display = "none";
-    
-    //Disable prompts and enable errors
-    document.getElementById("prompt").style.display = "none";
-    document.getElementById("error").style.display = "initial";
-    
     //AJAX request searching for canceling request search or creation
     let cncl = new XMLHttpRequest();
-    
+    cncl.onreadystatechange = function(){
+                    
+        if (this.readyState == 4 && this.status == 200) {
+            
+            //console.log(this.responseText); //debug
+            if(this.responseText == "ok"){
+                //Set Cancel message
+                document.getElementById("error").innerHTML = "Canceled";
+                //Stop displaying CANCEL button
+                document.getElementById("cancel").style.display = "none";
+                
+                //Stop displaying request's attributes form
+                document.getElementById("req").style.display = "none";
+                
+                //Disable prompts and enable errors
+                document.getElementById("prompt").style.display = "none";
+                document.getElementById("error").style.display = "initial";
+                
+            }
+            //Refresh page
+            window.location.reload(false);
+            
+        }
+        
+    };
     cncl.open("POST","php/handler.php",true);
     cncl.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     cncl.send("action=Cancel");
     
-    //Refresh page
-    window.location.reload(false);
 }
 
 function onMapClick(e){
@@ -50,7 +106,7 @@ function onMapClick(e){
     if(firstClick === false && secondClick === false){
         //Get click point (start point) coords
         let startCoords = e.latlng;
-        console.log(startCoords);//debug
+        //console.log(startCoords);//debug
         
         //Change firstClick value
         firstClick = startCoords;
@@ -64,9 +120,9 @@ function onMapClick(e){
         strtPntSrch.onreadystatechange = function(){
             
             if (this.readyState == 4 && this.status == 200) {
-                console.log(this.responseText); //debug
+                //console.log(this.responseText); //debug
                 let result = JSON.parse(this.responseText);
-                console.log(result); //debug
+                //console.log(result); //debug
                 
                 //If displayPrompt echoes
                 if(result.check){
@@ -116,7 +172,7 @@ function onMapClick(e){
             
             //Get click point (end point) coords
             let endCoords = e.latlng;
-            console.log(endCoords);//debug
+            //console.log(endCoords);//debug
             
             //Change secondClick value
             secondClick = endCoords;
@@ -153,7 +209,7 @@ function onMapClick(e){
                     
                     if (this.readyState == 4 && this.status == 200) {
                         
-                        console.log(this.responseText); //debug
+                        //console.log(this.responseText); //debug
                         //let result = JSON.parse(this.responseText);
                         //console.log(result); //debug
                         
