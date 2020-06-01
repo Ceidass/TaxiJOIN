@@ -74,6 +74,19 @@ class Request{
         return $res;
         
     }
+    
+    public function allReqs(){
+        
+        //Create $db object and set query to search for every active request
+        $db = new Database("SELECT * FROM requests");
+        
+        //Perform query and save result
+        $res = $db->performQuery();
+        
+        unset($db);
+        
+        return $res;
+    }
 
 }
 

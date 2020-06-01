@@ -289,6 +289,19 @@ class Main{
                 
             case "AllReqs":
                 
+                //Create new Request object
+                $rq = new Request();
+                
+                //Call allReqs() method to search for every request
+                $result = $rq->allReqs();
+                
+                unset($rq);
+                
+                //Create new Startpage object
+                $sp = new Startpage();
+                
+                //Call mapDisplay() method to return all request search results to browser
+                $sp->mapDisplay($result);
                 
                 
                 break;

@@ -94,6 +94,21 @@ class Startpage{
         
     }
     
+    public function madDisplay($result){
+        
+        if($result == false){
+            echo "false";
+        }elseif($result->num_rows > 0){
+            
+            //Create an associative array for every request found
+            while($req = $result->fetch_assoc)
+            
+            //Echo $req in json form
+            echo json_encode($req);
+        }
+        
+    }
+    
     public function headerPage(){
         
         header('Location:../start.html');
