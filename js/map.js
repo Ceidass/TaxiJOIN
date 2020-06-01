@@ -44,7 +44,28 @@ let allreqs = new XMLHttpRequest();
 
 allreqs.onreadystatechange = function(){
     
-    
+    if (this.readyState == 4 && this.status == 200) {
+        
+        //console.log(this.responseText);//debug
+        
+        if(this.responseText != false && this.responseText != "none"){
+            
+            let reqs = JSON.parse(this.responseText);
+            
+            //Array of variables to set the markers on map
+            let markers = new Array();
+            
+            //Access every reqs element
+            for(let i = 0; i<reqs.length; i++){
+                
+                //Add req marker to map
+                markers[i] = L.marker([Number(reqs[i].startlat),Number(reqs[i].startlong)]).addTo(map);
+                
+            }//for end
+            
+        }
+        
+    }
     
 };
 allreqs.open("POST","php/handler.php",true);

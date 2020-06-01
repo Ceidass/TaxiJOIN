@@ -94,17 +94,21 @@ class Startpage{
         
     }
     
-    public function madDisplay($result){
+    public function mapDisplay($result){
         
         if($result == false){
             echo "false";
         }elseif($result->num_rows > 0){
             
-            //Create an associative array for every request found
-            while($req = $result->fetch_assoc)
-            
+            //Create an associative array for every request found and save it to req
+            while($row = $result->fetch_assoc())
+                $req[] = $row;
+                
             //Echo $req in json form
             echo json_encode($req);
+            
+        }else{
+            echo "none";
         }
         
     }
