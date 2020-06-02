@@ -4,6 +4,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Check if there is any active request with creator name as user's name
 //AJAX request searching for active requests with user's name
 let checkrq = new XMLHttpRequest();
@@ -38,39 +39,61 @@ checkrq.open("POST","php/handler.php",true);
 checkrq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 checkrq.send("action=CheckRequest");
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Searching for every request and display it to map
-let allreqs = new XMLHttpRequest();
 
-allreqs.onreadystatechange = function(){
+//Variable counts times allReqs has been called to prevent remReq been called on page load 
+let itter = 0;
+//Array of variables to set the markers on map
+let markers = new Array();
+
+//Function to remove requests on map before loading new
+function remReqs(){
     
-    if (this.readyState == 4 && this.status == 200) {
+    //If is not the first time after loading the page
+    if(itter>0){
         
-        //console.log(this.responseText);//debug
-        
-        if(this.responseText != false && this.responseText != "none"){
-            
-            let reqs = JSON.parse(this.responseText);
-            
-            //Array of variables to set the markers on map
-            let markers = new Array();
-            
-            //Access every reqs element
-            for(let i = 0; i<reqs.length; i++){
-                
-                //Add req marker to map
-                markers[i] = L.marker([Number(reqs[i].startlat),Number(reqs[i].startlong)]).addTo(map);
-                
-            }//for end
-            
-        }
+        for(let j=0; j<markers.length; j++)
+            markers[j].remove();
         
     }
     
 };
-allreqs.open("POST","php/handler.php",true);
-allreqs.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-allreqs.send("action=AllReqs");
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Searching for every request and display it to map
+
+let allreqs = new XMLHttpRequest();
+
+function allReqs(){
+
+    allreqs.onreadystatechange = function(){
+        
+        if (this.readyState == 4 && this.status == 200) {
+            
+            //console.log(this.responseText);//debug
+            //Removes all requests from map to load the new one
+            remReqs();
+            if(this.responseText != false && this.responseText != "none"){
+                
+                let reqs = JSON.parse(this.responseText);
+                //Access every reqs element
+                for(let i = 0; i<reqs.length; i++){
+                    
+                    //Add req marker to map
+                    markers[i] = L.marker([Number(reqs[i].startlat),Number(reqs[i].startlong)]).addTo(map);
+                    
+                }//for end
+                
+            }
+            
+        }
+        
+    };
+    allreqs.open("POST","php/handler.php",true);
+    allreqs.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    allreqs.send("action=AllReqs");
+    
+    //Increase itter every time allReqs been called
+    itter++;
+};
 
 //Variable for checking if first map click has occurred
 let firstClick = false;
@@ -115,6 +138,8 @@ function cancel(){
     
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Function to be called on every map click
 function onMapClick(e){
     
     //Variable for button CANCEL to display it and use it to create an onclick event
@@ -252,7 +277,11 @@ function onMapClick(e){
 }//function onMapClick(e) end
 
 
+//Call method allReqs on load 
+allReqs();
 
 //Clicking on map for the first time
 map.on('click', onMapClick);
 
+//Call allReqs every 5 sec
+setInterval(allReqs, 5000);
