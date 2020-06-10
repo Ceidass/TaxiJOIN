@@ -116,6 +116,15 @@ footer {
 
 }
 
+#imap {
+    margin-top: 50px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	height: 300px;
+
+}
+
 #SignOut {
     
     background-color: red;
@@ -140,5 +149,21 @@ footer {
     display: none;
 }
 #cancel:hover {
+	border-color: black;
+}
+
+#inspect{
+    
+    display: none;
+}
+
+#close {
+    
+    background-color: red;
+    color: white;
+    border-style: outset;
+	border-color: grey;
+}
+#close:hover {
 	border-color: black;
 }

@@ -4,6 +4,51 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
+var imap = L.map('imap');
+    
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(imap);
+
+//Variable counts times allReqs has been called to prevent remReq been called on page load 
+let itter = 0;
+//Array of variables to set the markers on map
+let markers = new Array();
+//Variable to save the requests loading from server in JSON form
+let reqs;
+//Array of points (start/end) of the clicked (selected) request
+let selectedreq = new Array();
+//Variable for checking if you are now inspecting a request
+let inspectcheck = false;
+
+function inspect(req){
+    
+    if(!inspectcheck){
+        //Setting variable inspectcheck as true
+        inspectcheck = true;
+        
+        document.getElementById("inspect").style.display = "initial";
+        
+        selectedreq[0] = L.marker([Number(req.startlat),Number(req.startlong)]);
+        selectedreq[1] = L.marker([Number(req.endlat),Number(req.endlong)]);
+        
+        var group = L.featureGroup(selectedreq).addTo(imap);
+        
+        imap.fitBounds(group.getBounds());
+    }else{
+        
+        //Call function closeimap to delete previous inpecting request from imap 
+        closeimap();
+        //Set inspectcheck to false
+        inspectcheck = false;
+        //Call self again to execute if statement
+        inspect(req);
+        
+        
+    }
+    
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Check if there is any active request with creator name as user's name
 //AJAX request searching for active requests with user's name
@@ -40,11 +85,6 @@ checkrq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 checkrq.send("action=CheckRequest");
 
 
-//Variable counts times allReqs has been called to prevent remReq been called on page load 
-let itter = 0;
-//Array of variables to set the markers on map
-let markers = new Array();
-
 //Function to remove requests on map before loading new
 function remReqs(){
     
@@ -73,12 +113,14 @@ function allReqs(){
             remReqs();
             if(this.responseText != false && this.responseText != "none"){
                 
-                let reqs = JSON.parse(this.responseText);
+                //Save all the requests in JSON form
+                reqs = JSON.parse(this.responseText);
                 //Access every reqs element
                 for(let i = 0; i<reqs.length; i++){
                     
                     //Add req marker to map
-                    markers[i] = L.marker([Number(reqs[i].startlat),Number(reqs[i].startlong)]).addTo(map);
+                    markers[i] = L.marker([Number(reqs[i].startlat),Number(reqs[i].startlong)]).addTo(map).on("click",function (){inspect(reqs[i]);});
+                    markers[i].bindPopup("<b>"+reqs[i].creator+"</b><br>"+reqs[i].participants+" persons");
                     
                 }//for end
                 
@@ -276,6 +318,18 @@ function onMapClick(e){
     
 }//function onMapClick(e) end
 
+let close = document.getElementById("close");
+
+function closeimap(){
+    
+    //Remove last clicked request points from imap
+    selectedreq[0].remove();
+    selectedreq[1].remove();
+    
+    //Disable second map and Connect button
+    document.getElementById("inspect").style.display = "none";
+    
+}
 
 //Call method allReqs on load 
 allReqs();
@@ -285,3 +339,5 @@ map.on('click', onMapClick);
 
 //Call allReqs every 5 sec
 setInterval(allReqs, 5000);
+
+close.onclick = closeimap;
